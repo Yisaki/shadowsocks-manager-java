@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>端口列表</title>
+        <link rel="stylesheet" href="../lib/layui/css/layui.css">
+    </head>
+    <body>
+        <table id="portTable" lay-filter="portTable"></table>
+
+        <script src="../lib/layui/layui.js"></script>
+        <script src="../js/config.js"></script>
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="toggle">toggle</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+
+        <script>
+            var localData=layui.sessionData('chaos:login');
+            var token=localData.token;
+            if(null==token||''==token){
+                //未登录
+                parent.window.location.href='../login.html';
+
+            }
+
+            var role=localData.role;
+            var tableCol=[ //表头
+                {field: 'port', title: '端口', width:"5%",fixed: 'left'}
+                ,{field: 'password', title: '密码', width:"10%"}
+                ,{field: 'useType', title: '类型', width:"5%"}
+                ,{field: 'totalFlow', title: '总流量', width: "5%"}
+                ,{field: 'usedFlow', title: '使用流量', width: "5%"}
+                ,{field: 'addTime', title: '创建时间', width: "10%"}
+                ,{field: 'expireTime', title: '到期时间', width: "10%"}
+                ,{field: 'updateTime', title: '更新时间', width: "10%"}
+                ,{field: 'mark', title: '备注', width: "10%"}
+            ];
+            if(0==role) {
+                //管理员
+                tableCol.push({field: 'onwer', title: '所属用户', width: "10%"});
+                tableCol.push({
+                     title: '操作', width: "15%",toolbar: '#barDemo'
+                });
+            }
+
+            layui.use(['table','jquery','common'], function(){
+                var table = layui.table;
+                var common=layui.common;
+
+                //table start
+                var localData=layui.sessionData("chaos:login");
+                var apiUrlPre=localData.url;
+                //第一个实例
+                table.render({
+                    elem: '#portTable'
+                    ,height: 312
+                    ,toolbar:true
+                    ,url: apiUrlPre+'/api/port/list'
+                    ,headers:{token: localData.token}
+                    ,parseData: function(res){ //res 即为原始返回的数据
+                        return {
+                            "code": res.code, //解析接口状态
+                            "msg": res.desc, //解析提示文本
+                           //"count": res.total, //解析数据长度
+                            "data": res.data //解析数据列表
+                        };
+                    }
+                    ,page: false //开启分页
+                    ,cols: [tableCol]
+                });
+
+                //行工具栏事件
+                table.on('tool(portTable)', function(obj){
+                    var data = obj.data;
+                    //console.log(obj)
+                    if(obj.event === 'del'){
+                        layer.confirm('真的删除行么', function(index){
+                            obj.del();
+                            layer.close(index);
+                        });
+                    } else if(obj.event === 'toggle'){
+                        //更改端口状态
+                        var useType=data.useType;
+                        var port=data.port;
+                        var toggleUseType;
+                        if(useType>0){
+                            //可用->不可用
+                            toggleUseType=0;
+                        }else{
+                            //不可用->无限使用
+                            toggleUseType=2;
+                        }
+
+                        common.ajax('/api/port/setPortUseType?port='+port+'&useType='+toggleUseType,'GET',null,function(resp){
+                            if(resp.success){
+                                obj.update({
+                                    useType:toggleUseType
+                                });
+                            }else{
+                                //todo
+                            }
+                        })
+
+
+                    }
+                });
+
+
+                var $ = layui.jquery;
+
+
+            });
+
+
+        </script>
+
+
+    </body>
+</html>

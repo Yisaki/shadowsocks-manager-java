@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+</head>
+<body>
+
+<div class="layui-container">
+
+<!--    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+        <legend>增加端口</legend>
+    </fieldset>-->
+    <div class="layui-row">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">端口</label>
+                <div class="layui-input-block">
+                    <input type="text" name="port" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="password" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">可用时间(天)</label>
+                <div class="layui-input-block">
+                    <input type="text" name="day" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">可用流量(MB)</label>
+                <div class="layui-input-block">
+                    <input type="text" name="flow" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">单行选择框</label>
+                <div class="layui-input-block">
+                    <select name="useType" lay-filter="aihao">
+                        <option value="0">不可用</option>
+                        <option value="1">限量</option>
+                        <option value="2" selected="true">不限量</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+
+
+
+</div>
+
+<script src="../lib/layui/layui.js"></script>
+<script src="../js/config.js"></script>
+<script>
+    var localData=layui.sessionData('chaos:login');
+    var token=localData.token;
+    if(null==token||''==token){
+        //未登录
+        parent.window.location.href='../login.html';
+
+    }
+
+    layui.use(['form','common'],function(){
+       var form=layui.form;
+        var common=layui.common;
+
+        form.on('submit(*)', function(data){
+            var formData=data.field;
+            common.ajax('/api/port/add','POST',formData,function(resp){
+                if(resp.success){
+                    alert('添加成功');
+                }else{
+                    alert('添加失败');
+                }
+
+            });
+
+            return false;
+        });
+    });
+
+</script>
+</body>
+</html>

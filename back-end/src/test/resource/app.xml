@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+        <bean id="user1" class="bean.User" init-method="init" destroy-method="myDestroy">
+                <property name="id" value="123"/>
+        </bean>
+<!--        <bean id="user2" class="bean.User" factory-method="getInst"></bean>
+
+        <bean id="userFactory" class="bean.UserFactory"></bean>
+        <bean id="user3" factory-bean="userFactory" factory-method="get" ></bean>-->
+
+
+        <bean id="beanPostProcess" class="bean.MyBeanPostProcessor" />
+
+
+
+</beans>

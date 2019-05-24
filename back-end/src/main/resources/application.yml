@@ -1,0 +1,62 @@
+server:
+  port: 5668
+  tomcat:
+    uri-encoding: utf-8
+#  servlet:
+#    context-path: /study
+
+
+spring:
+  profiles:
+    active: local
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    dbcp2:
+      min-idle: 1
+      initial-size: 1
+      max-total: 10
+  freemarker:
+    template-loader-path: classpath:/templates
+  mvc:
+    static-path-pattern: /static/**
+  devtools:
+      restart:
+        #热部署生效
+        enabled: true
+        #设置重启的目录
+        additional-paths: resources/**,static/**,templates/**
+        #该目录下的内容修改不重启
+        exclude: data/**
+
+#mybatis-plus:
+#  mapper-locations: classpath:/com/chaos/mapper
+
+#cust conifg
+netty:
+  port: 8888
+  serverIp: 127.0.0.1
+  serverPort: 6111
+
+auth:
+  appkey: hxq,test
+  appsecret: 123,123
+
+---
+spring:
+  profiles: local
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ss_manager?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: 123
+  thymeleaf:
+    cache: false
+
+---
+spring:
+  profiles: product
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: 123
+

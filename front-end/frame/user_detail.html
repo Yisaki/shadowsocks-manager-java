@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+</head>
+<body>
+
+<div class="layui-container">
+
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <h1>用户详情</h1>
+        </div>
+    </div>
+    <hr>
+    <div class="layui-row">
+        <div class="layui-col-md3">
+            <span>用户名:</span>
+        </div>
+        <div class="layui-col-md9">
+            <span>admin</span>
+        </div>
+    </div>
+    <hr>
+    <div class="layui-row">
+        <div class="layui-col-md3">
+            <span>密码:</span>
+        </div>
+        <div class="layui-col-md9">
+            <span>123</span>
+        </div>
+    </div>
+    <hr>
+    <div class="layui-row">
+        <div class="layui-col-md3">
+            <span>上次定登录时间:</span>
+        </div>
+        <div class="layui-col-md9">
+            <span>2015:123：:13</span>
+        </div>
+    </div>
+    <hr>
+
+
+</div>
+
+<script src="../lib/layui/layui.js"></script>
+<script>
+    var localData=layui.sessionData('chaos:login');
+    var token=localData.token;
+    if(null==token||''==token){
+        //未登录
+        parent.window.location.href='../login.html';
+
+    }
+
+</script>
+</body>
+</html>
