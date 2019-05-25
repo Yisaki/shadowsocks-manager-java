@@ -2,12 +2,16 @@ package com.chaos.controller.api;
 
 import com.chaos.annotation.Role;
 import com.chaos.config.ConfigValue;
+import com.chaos.po.UserInfo;
 import com.chaos.service.IUserService;
+import com.chaos.util.CommonUtil;
 import com.chaos.vo.CommonResult;
 import com.chaos.vo.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -46,4 +50,31 @@ public class UserController {
 
         return resp;
     }
+
+    @Role(0)
+    @GetMapping("/list")
+    public CommonResult< List<UserInfo>> list(){
+        CommonResult< List<UserInfo>> resp=new CommonResult<>();
+
+        List<UserInfo> list = userService.list();
+        resp.setData(list);
+        return resp;
+    }
+
+    @Role(1)
+    @GetMapping("/getUser")
+    public CommonResult<User> getUser(@RequestParam String name){
+        CommonResult<User> resp=new CommonResult<>();
+
+        UserInfo userPo = userService.getUser(name);
+        User userVo=new User();
+        userVo.setUser(userPo.getName());
+        userVo.setPassword(userPo.getPassword());
+        userVo.setLoginTime(CommonUtil.formateDate(userPo.getLastLoginTime()));
+
+        resp.setData(userVo);
+        return resp;
+    }
+
+
 }

@@ -20,6 +20,8 @@ public class PortInfoVo {
     private Long usedFlow;
     //备注
     private String mark;
+    //拥有者
+    private String owner;
     //展示用###end###
 
     //更新用###start###

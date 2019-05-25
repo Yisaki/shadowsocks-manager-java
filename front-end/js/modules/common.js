@@ -55,7 +55,18 @@ layui.define(['jquery'], function (exports) {
             var staticUrl = localData.staticUrl;
             return staticUrl;
         },
+        isLogin:function(){
+          if(obj.getToken()==null||obj.getToken()==''){
+              return false;
+          }else{
+              return true;
+          }
+        },
         isAdmin:function(){
+            if(!obj.isLogin()){
+                return false;
+            }
+
             var localData = layui.sessionData('chaos:login');
             if(0==localData.role){
                 return true;

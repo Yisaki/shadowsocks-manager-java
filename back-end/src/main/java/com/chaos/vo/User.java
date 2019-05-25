@@ -10,5 +10,6 @@ public class User {
     private String password;
     private Integer role;
     private String token;
-    private Date loginTime;
+    private String loginTime;
+    private Long loginTimeLong;
 }

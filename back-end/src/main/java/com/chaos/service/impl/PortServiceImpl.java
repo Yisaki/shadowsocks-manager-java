@@ -222,4 +222,29 @@ public class PortServiceImpl implements IPortService {
             return false;
         }
     }
+
+    @Override
+    public boolean bindUser(int port, String user) {
+        QueryWrapper<PortInfo> wrapper = new QueryWrapper<>();
+        wrapper.eq("port", port);
+        PortInfo portInfo = portInfoMapper.selectOne(wrapper);
+        if (portInfo == null) {
+            return false;
+        }
+        //待更新的对象
+        PortInfo newPortInfo = new PortInfo();
+        newPortInfo.setId(portInfo.getId());
+        newPortInfo.setUserName(user);
+
+        return portInfoMapper.updateById(newPortInfo)>0;
+
+    }
+
+    @Override
+    public List<PortInfo> listUnbind() {
+        QueryWrapper<PortInfo> wrapper = new QueryWrapper<>();
+        wrapper.isNull("fk_user_info_name").or().eq("fk_user_info_name","");
+
+        return portInfoMapper.selectList(wrapper);
+    }
 }

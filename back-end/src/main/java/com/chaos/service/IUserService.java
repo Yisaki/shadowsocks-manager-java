@@ -3,6 +3,8 @@ package com.chaos.service;
 import com.chaos.po.UserInfo;
 import com.chaos.vo.User;
 
+import java.util.List;
+
 public interface IUserService {
 
     /**
@@ -14,4 +16,6 @@ public interface IUserService {
     User authUser(String name, String password);
 
     UserInfo getUser(String name);
+
+    List<UserInfo> list();
 }

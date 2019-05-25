@@ -25,4 +25,8 @@ public interface IPortService {
     boolean remove(int port);
 
     boolean update(PortInfoVo portInfoVo);
+
+    boolean bindUser(int port,String user);
+
+    List<PortInfo> listUnbind();
 }

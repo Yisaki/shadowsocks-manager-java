@@ -69,7 +69,7 @@
 
     <div class="layui-footer">
         <!-- 底部固定区域 -->
-        © 底部固定区域
+        © 这是底部固定区域
     </div>
 </div>
 <script src="lib/layui/layui.js"></script>
@@ -90,14 +90,15 @@
                 if(resp.success){
                     layer.msg("登出成功");
                 }
+                var href=common.appStaticURL()+'/login.html'
                 layui.sessionData('chaos:login',null);
-                window.location.href=common.appStaticURL()+'/login.html';
+                window.location.href=href;
             })
 
         })
 
         //右侧导航栏
-        var adminNav=[{'url':'frame/add_port.html','value':'增加端口'}];
+        var adminNav=[{'url':'frame/add_port.html','value':'增加端口'},{'url':'frame/user_list.html','value':'用户列表'}];
         if(common.isAdmin()){
             var htmlStr='';
             adminNav.forEach(function(value,i){

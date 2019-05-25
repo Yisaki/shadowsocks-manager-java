@@ -61,6 +61,8 @@ public class PortController {
             portInfoVo.setUseType(portInfo.getUseType());
 
             portInfoVo.setMark(portInfo.getMark());
+
+            portInfoVo.setOwner(portInfo.getUserName());
             data.add(portInfoVo);
         }
 
@@ -122,6 +124,7 @@ public class PortController {
         return result;
     }
 
+    @Role(0)
     @GetMapping("/remove")
     public CommonResult<Void> remove(int port) {
         CommonResult<Void> result = new CommonResult<>();
@@ -130,6 +133,24 @@ public class PortController {
         result.setSuccess(flag);
 
 
+        return result;
+    }
+
+    @Role(0)
+    @PostMapping("/bindUser")
+    public CommonResult<Void> bindUser(@RequestBody PortInfoVo portInfoVo){
+        CommonResult<Void> result = new CommonResult<>();
+        boolean res=portService.bindUser(portInfoVo.getPort(),portInfoVo.getOwner());
+        result.setSuccess(res);
+        return result;
+    }
+
+    @Role(0)
+    @GetMapping("/listUnbind")
+    public CommonResult<List<PortInfo>> listUnbind(){
+        CommonResult<List<PortInfo>> result = new CommonResult<>();
+        List<PortInfo> portInfos = portService.listUnbind();
+        result.setData(portInfos);
         return result;
     }
 

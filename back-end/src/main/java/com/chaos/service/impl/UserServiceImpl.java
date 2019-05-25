@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -42,7 +43,7 @@ public class UserServiceImpl implements IUserService {
             result.setUser(userName);
             result.setRole(role);
             result.setToken(token);
-            result.setLoginTime(new Date());
+            result.setLoginTimeLong(System.currentTimeMillis());
 
             //token入缓存
 
@@ -59,5 +60,13 @@ public class UserServiceImpl implements IUserService {
         wrapper.eq("name",name);
         UserInfo userInfo=userInfoMapper.selectOne(wrapper);
         return userInfo;
+    }
+
+    @Override
+    public List<UserInfo> list() {
+        QueryWrapper<UserInfo> wrapper=new QueryWrapper<>();
+        List<UserInfo> userInfos = userInfoMapper.selectList(wrapper);
+       return userInfos;
+
     }
 }
