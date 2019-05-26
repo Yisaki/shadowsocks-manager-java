@@ -103,5 +103,6 @@ public class CheckPortExpireSchedule {
                 ConfigValue.tokenMap.remove(entry.getKey());
             }
         }
+        log.info("current token size:{}",ConfigValue.tokenMap.size());
     }
 }
