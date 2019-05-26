@@ -23,7 +23,7 @@ public class SaveFlowSchedule {
     @Autowired
     private PortInfoMapper portInfoMapper;
 
-    @Scheduled(cron = "0 0/3 * * * ? ")
+    @Scheduled(cron = "${task.saveFlow}")
     public void saveFlow(){
         String stat=null;
         while((stat=statQueue.poll())!=null){

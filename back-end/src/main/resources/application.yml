@@ -20,14 +20,6 @@ spring:
     template-loader-path: classpath:/templates
   mvc:
     static-path-pattern: /static/**
-  devtools:
-      restart:
-        #热部署生效
-        enabled: true
-        #设置重启的目录
-        additional-paths: resources/**,static/**,templates/**
-        #该目录下的内容修改不重启
-        exclude: data/**
 
 #mybatis-plus:
 #  mapper-locations: classpath:/com/chaos/mapper
@@ -38,9 +30,9 @@ netty:
   serverIp: 127.0.0.1
   serverPort: 6111
 
-auth:
-  appkey: hxq,test
-  appsecret: 123,123
+task :
+  checkPort : 0 0/30 * * * ?
+  saveFlow : 0 0/5 * * * ?
 
 ---
 spring:

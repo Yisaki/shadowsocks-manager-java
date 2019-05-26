@@ -18,21 +18,14 @@ public class ConfigValue {
     public static String serverIp;
     public static Integer serverPort;
 
-    @Value("${auth.appkey}")
-    private String appkey;
-    @Value("${auth.appsecret}")
-    private String appsecret;
+
     public static Map<String,String> appMap=new HashMap<>();
 
     public static Map<String,User> tokenMap=new HashMap<>();
 
     @PostConstruct
     public void init(){
-        String[] appkeys = appkey.split(",");
-        String[] appsecrets = appsecret.split(",");
-        for(int i=0;i<appkeys.length;i++){
-            appMap.put(appkeys[i],appsecrets[i]);
-        }
+
     }
 
     @Value("${netty.port}")
