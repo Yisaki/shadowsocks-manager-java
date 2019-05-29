@@ -20,7 +20,7 @@
             <span>用户名:</span>
         </div>
         <div class="layui-col-md9">
-            <span id="userName">admin</span>
+            <span id="userName"></span>
         </div>
     </div>
     <hr>
@@ -29,7 +29,7 @@
             <span>密码:</span>
         </div>
         <div class="layui-col-md9">
-            <span id="password">123</span>
+            <span id="password"></span>
         </div>
     </div>
     <hr>
@@ -38,7 +38,7 @@
             <span>上次定登录时间:</span>
         </div>
         <div class="layui-col-md9">
-            <span id="lastLogin">2015:123：:13</span>
+            <span id="lastLogin"></span>
         </div>
     </div>
     <hr>
@@ -49,11 +49,12 @@
 <script src="../lib/layui/layui.js"></script>
 <script src="../js/config.js"></script>
 <script>
-    var localData=layui.sessionData('chaos:login');
+
 
     layui.use(['common'], function () {
         var $=layui.$;
         var common=layui.common;
+        var localData=common.getLocalData();
         common.ajax('/api/user/getUser?name='+localData.user,'GET',null,function(resp){
             if(resp.success){
                 $('#userName').html(resp.data.user);

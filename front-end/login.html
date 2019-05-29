@@ -63,9 +63,9 @@
            var requestData={'user':user,'password':psw};
            common.ajax("/api/user/login",'POST',requestData,function(resp){
                 if(resp.success){
-                    layui.sessionData('chaos:login', {key: 'user' ,value: resp.data.user});
-                    layui.sessionData('chaos:login', {key: 'token' ,value: resp.data.token});
-                    layui.sessionData('chaos:login', {key: 'role' ,value: resp.data.role});
+                    layui.data('chaos:login', {key: 'user' ,value: resp.data.user});
+                    layui.data('chaos:login', {key: 'token' ,value: resp.data.token});
+                    layui.data('chaos:login', {key: 'role' ,value: resp.data.role});
 
                     window.location.href=common.appStaticURL()+"/index.html";
                 }else{

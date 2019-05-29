@@ -6,7 +6,7 @@ layui.define(['jquery'], function (exports) {
     var obj = {
         ajax: function (url, type, data, callback) {
 
-            var localData = layui.sessionData('chaos:login');
+            var localData =obj.getLocalData();
             //api 地址
             var apiURLPrefix = localData.url;
             //静态资源地址
@@ -17,7 +17,6 @@ layui.define(['jquery'], function (exports) {
                 var token = localData.token;
                 if (null == token || '' == token) {
                     if (self != top) {
-                        //alert('在iframe中');
                         parent.window.location.href = staticURLPrefix + '/login.html';
                     }else{
                         window.location.href = staticURLPrefix + '/login.html';
@@ -26,7 +25,6 @@ layui.define(['jquery'], function (exports) {
                     return;
                 }
             }
-
 
             var ajaxConfig = {
                 url: apiURLPrefix + url,
@@ -45,13 +43,17 @@ layui.define(['jquery'], function (exports) {
 
             $.ajax(ajaxConfig);
         },
+        getLocalData:function(){
+            var localData = layui.data('chaos:login');
+            return localData;
+        },
         appURL: function () {
-            var localData = layui.sessionData('chaos:login');
+            var localData = obj.getLocalData();
             var apiURLPrefix = localData.url;
             return apiURLPrefix;
         },
         appStaticURL: function () {
-            var localData = layui.sessionData('chaos:login');
+            var localData = obj.getLocalData();
             var staticUrl = localData.staticUrl;
             return staticUrl;
         },
@@ -67,7 +69,7 @@ layui.define(['jquery'], function (exports) {
                 return false;
             }
 
-            var localData = layui.sessionData('chaos:login');
+            var localData = obj.getLocalData();
             if(0==localData.role){
                 return true;
             }else{
@@ -75,7 +77,7 @@ layui.define(['jquery'], function (exports) {
             }
         },
         getToken:function(){
-            var localData = layui.sessionData('chaos:login');
+            var localData = obj.getLocalData();
             return localData.token;
         }
     };

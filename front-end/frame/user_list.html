@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="../lib/layui/css/layui.css">
 </head>
 <body>
-<table id="portTable" lay-filter="portTable"></table>
+<table id="dataTable" lay-filter="portTable"></table>
 
 <!--layer-->
 <div id="add-port-form" style="display: none">
@@ -61,8 +61,7 @@
         ];
 
         table.render({
-            elem: '#portTable'
-            , height: 312
+            elem: '#dataTable'
             , toolbar: false
             , url: common.appURL() + '/api/user/list'
             , headers: {token: common.getToken()}

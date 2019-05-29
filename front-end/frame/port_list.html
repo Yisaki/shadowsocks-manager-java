@@ -16,58 +16,51 @@
 </script>
 
 <script>
-    var localData = layui.sessionData('chaos:login');
-    var token = localData.token;
-    if (null == token || '' == token) {
-        //未登录
-        parent.window.location.href = '../login.html';
 
-    }
-
-    var role = localData.role;
-    var tableCol = [ //表头
-        {field: 'port', title: '端口', width: "5%", fixed: 'left'}
-        , {field: 'password', title: '密码'}
-        , {field: 'useType', title: '类型',templet:function(d){
-                var resultHtml='';
-                if(d.useType==0){
-                    resultHtml='不可用';
-                }else if(d.useType==1){
-                    resultHtml='可用';
-                }else{
-                    resultHtml='无限使用';
-                }
-                return resultHtml;
-            }}
-        , {field: 'totalFlow', title: '总流量(Mb)'}
-        , {field: 'usedFlow', title: '使用流量(Mb)'}
-        , {field: 'addTime', title: '创建时间'}
-        , {field: 'expireTime', title: '到期时间'}
-        , {field: 'updateTime', title: '更新时间'}
-        , {field: 'mark', title: '备注'}
-    ];
-    if (0 == role) {
-        //管理员
-        tableCol.push({field: 'owner', title: '所属用户'});
-        tableCol.push({
-            title: '操作', toolbar: '#barDemo'
-        });
-    }
 
     layui.use(['table', 'jquery', 'common'], function () {
         var table = layui.table;
         var common = layui.common;
 
         //table start
-        var localData = layui.sessionData("chaos:login");
-        var apiUrlPre = localData.url;
+        var localData =common.getLocalData();
+        var role = localData.role;
+        //表头
+        var tableCol = [
+            {field: 'port', title: '端口', width: "5%", fixed: 'left'}
+            , {field: 'password', title: '密码'}
+            , {field: 'useType', title: '类型',templet:function(d){
+                    var resultHtml='';
+                    if(d.useType==0){
+                        resultHtml='不可用';
+                    }else if(d.useType==1){
+                        resultHtml='可用';
+                    }else{
+                        resultHtml='无限使用';
+                    }
+                    return resultHtml;
+                }}
+            , {field: 'totalFlow', title: '总流量(Mb)'}
+            , {field: 'usedFlow', title: '使用流量(Mb)'}
+            , {field: 'addTime', title: '创建时间'}
+            , {field: 'expireTime', title: '到期时间'}
+            , {field: 'updateTime', title: '更新时间'}
+            , {field: 'mark', title: '备注'}
+        ];
+        if (0 == role) {
+            //管理员
+            tableCol.push({field: 'owner', title: '所属用户'});
+            tableCol.push({
+                title: '操作', toolbar: '#barDemo'
+            });
+        }
+
         //第一个实例
         table.render({
             elem: '#portTable'
-            , height: 312
             , toolbar: true
-            , url: apiUrlPre + '/api/port/list'
-            , headers: {token: localData.token}
+            , url: common.appURL() + '/api/port/list'
+            , headers: {token: common.getToken()}
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
                     "code": res.code, //解析接口状态
@@ -120,9 +113,6 @@
 
             }
         });
-
-
-        var $ = layui.jquery;
 
 
     });
