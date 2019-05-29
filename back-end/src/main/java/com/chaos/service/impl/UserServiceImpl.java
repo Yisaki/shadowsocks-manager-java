@@ -35,6 +35,13 @@ public class UserServiceImpl implements IUserService {
             return null;
         }else{
             //db校验成功
+
+            //更新登录时间
+            UserInfo toUpdatePo=new UserInfo();
+            toUpdatePo.setLastLoginTime(new Date());
+            toUpdatePo.setId(userInfo.getId());
+            userInfoMapper.updateById(toUpdatePo);
+
             String userName=userInfo.getName();
             int role=userInfo.getRole();
             String token= CommonUtil.generateToken();
