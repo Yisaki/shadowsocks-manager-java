@@ -133,7 +133,8 @@ public class PortServiceImpl implements IPortService {
     public boolean remove(int port) {
         UpdateWrapper<PortInfo> wrapper = new UpdateWrapper<>();
         wrapper.eq("port", port);
-        int update = portInfoMapper.delete(wrapper);
+        wrapper.set("use_type", 0);
+        int update = portInfoMapper.update(null, wrapper);
 
         if(update>0){
             boolean sendDelete = udpCommandService.sendDelete(port);
