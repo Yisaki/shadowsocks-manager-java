@@ -20,7 +20,7 @@ import javax.annotation.PostConstruct;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -88,7 +88,7 @@ public class ShadowManagerClient {
         }
     }
 
-    public boolean sendUDP(String content) {
+    private boolean sendUDP(String content) {
 
         ByteBuf byteBuf = null;
         try {
@@ -108,7 +108,13 @@ public class ShadowManagerClient {
     }
 
 
-    private void sendImpl(UDPCommandVo udpCommandVo){
+/*    private UDPCommandVo sendImpl(UDPCommandVo udpCommandVo){
+        UDPCommandVo resp=null;
+        //0.把请求与udp的read回调(响应)关联起来
+        UDPRequestCallback udpRequestCallback = new UDPRequestCallback(udpCommandVo);
+        udpHandler.setUdpRequestCallback(udpRequestCallback);
+        FutureTask<UDPCommandVo> future=new FutureTask<>(udpRequestCallback);
+
 
         //1.请求udp服务器
         String commandStr = udpCommandVo.getCommandContent();
@@ -116,43 +122,66 @@ public class ShadowManagerClient {
         boolean sendFlag = sendUDP(commandStr);
         if (!sendFlag) {
             //发送udp请求失败
-            udpCommandVo.setRes(false);
-            udpCommandVo.setFailDesp("send udp fail");
-            return;
+            resp=new UDPCommandVo();
+            resp.setRes(false);
+            resp.setFailDesp("send udp fail");
+            return resp;
         }
 
+        //2.起一个线程监听是否有回包
+        new Thread(future).start();
+        try {
+             resp = future.get();
+        } catch (Exception e) {
+            resp=new UDPCommandVo();
+            resp.setRes(false);
+            resp.setFailDesp(e.getMessage());
+            return resp;
+        }
 
-        //2.等待回包
-        long startTime = System.currentTimeMillis();
-        while (!udpCommandVo.isRes()) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                //等待回包超时
-                udpCommandVo.setRes(false);
-                udpCommandVo.setFailDesp(e.getMessage());
-                return;
+        return resp;
+
+
+    }*/
+
+    private UDPCommandVo sendImpl2(UDPCommandVo udpCommandVo){
+        //0.用回调类封装udpCommandVo,并设置到netty read中
+        UDPRequestCallback udpRequestCallback = new UDPRequestCallback(udpCommandVo);
+        udpHandler.setUdpRequestCallback(udpRequestCallback);
+
+        CompletableFuture<UDPCommandVo> future=CompletableFuture.supplyAsync(()->{
+            String commandStr = udpCommandVo.getCommandContent();
+            log.info("request udp:{}",commandStr);
+            boolean sendFlag = sendUDP(commandStr);
+            return sendFlag;
+        }).thenApply((r)->{
+            if(r){
+                long startTime = System.currentTimeMillis();
+                //发送成功
+                while(!udpRequestCallback.isDone()){
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime - startTime > 10000) {
+                        //若等待超过10秒 停止等待
+                        return null;
+                    }
+                }
+
+                return udpRequestCallback.getCallbackedVo();
+            }else{
+                //发送失败
+                return null;
             }
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - startTime > 10000) {
-                break;
-            }
+        });
+
+        UDPCommandVo resp=null;
+        try {
+            resp=future.get(10,TimeUnit.SECONDS);
+        } catch (Exception e) {
+            log.error("发送udp请求失败",e);
         }
 
-        //3.判断结果
-        if (!udpCommandVo.isRes() || udpCommandVo.getResult() == null) {
-            udpCommandVo.setRes(false);
-            udpCommandVo.setFailDesp("wait for resp timeout");
-            return;
-        }
 
-        //4.holder中的对象 与 入参 不是一个对象 （不可能发生）
-        if (udpCommandVo != udpHandler.processingCommandHolder.getUdpCommandVo()) {
-            log.error("not equal");
-            udpCommandVo.setRes(false);
-            udpCommandVo.setFailDesp("not equal???");
-            return;
-        }
+        return resp;
     }
 
     /**
@@ -161,27 +190,25 @@ public class ShadowManagerClient {
      * 所以这里做了阻塞 即每次只允许发一条指令
      * @param udpCommandVo
      */
-    public void send(UDPCommandVo udpCommandVo){
-
+    public UDPCommandVo send(UDPCommandVo udpCommandVo){
+        UDPCommandVo resp=null;
         try {
             //拿锁
             commandLock.tryLock(30, TimeUnit.SECONDS);
-            //设置接收回包
-            UdpHandler.processingCommandHolder.setUdpCommandVo(udpCommandVo);
 
             //真实业务逻辑
-            sendImpl(udpCommandVo);
+            resp = sendImpl2(udpCommandVo);
 
         } catch (InterruptedException e) {
             log.error("get lock timeout",e);
-
+            resp=new UDPCommandVo();
             udpCommandVo.setRes(false);
             udpCommandVo.setFailDesp("get lock timeout");
         } finally {
             //释放资源
-            UdpHandler.processingCommandHolder.setUdpCommandVo(null);
             commandLock.unlock();
         }
+        return resp;
     }
 
 

@@ -29,9 +29,9 @@ public class UDPCommandServiceImpl implements IUDPCommandService {
         udpCommandVo.setSeq(1L);
         udpCommandVo.setTimestamp(System.currentTimeMillis());
 
-        client.send(udpCommandVo);
+        UDPCommandVo resp=client.send(udpCommandVo);
 
-        return udpCommandVo.isRes();
+        return resp.isRes();
 
     }
 
@@ -47,9 +47,9 @@ public class UDPCommandServiceImpl implements IUDPCommandService {
         udpCommandVo.setSeq(1L);
         udpCommandVo.setTimestamp(System.currentTimeMillis());
 
-        client.send(udpCommandVo);
+        UDPCommandVo resp=client.send(udpCommandVo);
 
-        return udpCommandVo.isRes();
+        return resp.isRes();
     }
 
     @Override
@@ -62,8 +62,7 @@ public class UDPCommandServiceImpl implements IUDPCommandService {
         udpCommandVo.setSeq(1L);
         udpCommandVo.setTimestamp(System.currentTimeMillis());
 
-        client.send(udpCommandVo);
-
-        return udpCommandVo.getResult();
+        UDPCommandVo resp=client.send(udpCommandVo);
+        return resp.getResult();
     }
 }

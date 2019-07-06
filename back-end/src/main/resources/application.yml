@@ -31,7 +31,7 @@ netty:
   serverPort: 6111
 
 task :
-  checkPort : 0 0/30 * * * ?
+  checkPort : 0 0/5 * * * ?
   saveFlow : 0 0/5 * * * ?
 
 ---
