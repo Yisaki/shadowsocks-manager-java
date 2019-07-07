@@ -145,9 +145,8 @@ public class ShadowManagerClient {
     }*/
 
     private UDPCommandVo sendImpl2(UDPCommandVo udpCommandVo){
-        //0.用回调类封装udpCommandVo,并设置到netty read中
-        UDPRequestCallback udpRequestCallback = new UDPRequestCallback(udpCommandVo);
-        udpHandler.setUdpRequestCallback(udpRequestCallback);
+        //0.当前请求udpCommandVo设置到netty read中
+        udpHandler.setUdpCommandVo(udpCommandVo);
 
         CompletableFuture<UDPCommandVo> future=CompletableFuture.supplyAsync(()->{
             String commandStr = udpCommandVo.getCommandContent();
@@ -156,32 +155,50 @@ public class ShadowManagerClient {
             return sendFlag;
         }).thenApply((r)->{
             if(r){
-                long startTime = System.currentTimeMillis();
+
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 //发送成功
-                while(!udpRequestCallback.isDone()){
-                    long currentTime = System.currentTimeMillis();
-                    if (currentTime - startTime > 10000) {
-                        //若等待超过10秒 停止等待
-                        return null;
+                long startTime = System.currentTimeMillis();
+                while(true){
+                    log.debug(""+udpCommandVo.isRes()+","+udpCommandVo.getResult());
+                    if(udpCommandVo.isRes()&&udpCommandVo.getResult()!=null){
+                        break;
+                    }else{
+                        long currentTime = System.currentTimeMillis();
+                        if (currentTime - startTime > 10000) {
+                            log.error("wait too long:{}",udpCommandVo);
+                            //若等待超过10秒 停止等待
+                            udpCommandVo.setFailDesp("wait too long");
+                            return udpCommandVo;
+                        }
                     }
                 }
 
-                return udpRequestCallback.getCallbackedVo();
+                return udpCommandVo;
             }else{
                 //发送失败
-                return null;
+                udpCommandVo.setFailDesp("send udp fail");
+                return udpCommandVo;
             }
         });
 
-        UDPCommandVo resp=null;
         try {
-            resp=future.get(10,TimeUnit.SECONDS);
+            future.get();
         } catch (Exception e) {
+            udpCommandVo.setFailDesp(e.getMessage());
             log.error("发送udp请求失败",e);
         }
 
+        //清理掉请求的vo
+        udpHandler.clearUdpCommandVo();
 
-        return resp;
+
+        return udpCommandVo;
     }
 
     /**

@@ -1,7 +1,9 @@
 package com.chaos.vo;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Data
 public class UDPCommandVo {
     //序列号
@@ -16,4 +18,10 @@ public class UDPCommandVo {
     private String failDesp;
     //时间戳
     private Long timestamp;
+
+    public void callback(String msg){
+        this.setRes(true);
+        this.setResult(msg);
+        log.info("callback:{}",this);
+    }
 }
